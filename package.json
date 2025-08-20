@@ -1,0 +1,44 @@
+{
+  "name": "badges-with-personality",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:up": "docker-compose up -d postgres",
+    "db:down": "docker-compose down",
+    "db:migrate": "node scripts/migrate.mjs",
+    "db:migrate:local": "node scripts/migrate-local.mjs",
+    "db:seed": "node scripts/seed.mjs",
+    "db:setup": "npm run db:up && sleep 3 && npm run db:migrate:local"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.0",
+    "@vercel/blob": "^0.27.0",
+    "@vercel/og": "^0.6.0",
+    "@vercel/postgres": "^0.10.0",
+    "clsx": "^2.1.1",
+    "cookies-next": "^5.0.1",
+    "dotenv": "^16.4.5",
+    "next": "15.1.0",
+    "openai": "^4.77.0",
+    "pg": "^8.16.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "sharp": "^0.33.5",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.15.0",
+    "eslint-config-next": "15.1.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2"
+  }
+}
