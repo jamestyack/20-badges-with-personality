@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateBadgeImage } from '@/lib/ai';
-import { processAndStoreBadge, generateSlug } from '@/lib/image';
+import { processAndStoreBadge, generateSlug } from '@/lib/image-vercel';
 import { createBadge } from '@/lib/db';
 import { combineTemplateWithBrief } from '@/lib/style-templates';
 import { z } from 'zod';
@@ -78,6 +78,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Generate image error:', error);
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -86,8 +87,15 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    // More detailed error response for debugging
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Detailed error:', errorMessage);
+    
     return NextResponse.json(
-      { error: 'Failed to generate and store badge' },
+      { 
+        error: 'Failed to generate and store badge',
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
       { status: 500 }
     );
   }
