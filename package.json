@@ -14,10 +14,12 @@
     "db:add-columns": "node scripts/add-badge-columns.mjs",
     "db:seed": "node scripts/seed.mjs",
     "db:setup": "npm run db:up && sleep 3 && npm run db:migrate:local",
-    "db:migrate:vercel": "node scripts/vercel-migrate.mjs"
+    "db:migrate:vercel": "node scripts/vercel-migrate.mjs",
+    "db:migrate:neon": "node scripts/neon-migrate.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.0",
+    "@neondatabase/serverless": "^1.0.1",
     "@vercel/blob": "^0.27.0",
     "@vercel/og": "^0.6.0",
     "@vercel/postgres": "^0.10.0",
