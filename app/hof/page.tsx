@@ -3,12 +3,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Hall of Fame | Badges with Personality',
   description: 'View all awarded achievement badges',
 };
-
-export const revalidate = 60; // Revalidate every minute
 
 export default async function HallOfFamePage() {
   const awards = await getAllAwards();

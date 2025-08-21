@@ -3,12 +3,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import DeleteButton from './delete-button';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Admin Hall of Fame | Badges with Personality',
   description: 'Manage awarded achievement badges',
 };
-
-export const revalidate = 0; // Always fetch fresh data
 
 export default async function AdminHallOfFamePage() {
   const awards = await getAllAwards();
