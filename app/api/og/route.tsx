@@ -1,6 +1,6 @@
 import { ImageResponse } from '@vercel/og';
 import { NextRequest } from 'next/server';
-import { getAwardWithDetails } from '@/lib/db';
+import { getAwardWithDetails } from '@/lib/db-neon';
 
 export const runtime = 'edge';
 

@@ -2,6 +2,8 @@ import { getAllBadges, getAllPeople, getAllProjects } from '@/lib/db';
 import Link from 'next/link';
 import Image from 'next/image';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Manage Awards | Admin',
   description: 'Manage badges and awards',
