@@ -1,6 +1,7 @@
 import { getAllAwards } from '@/lib/db';
 import Image from 'next/image';
 import Link from 'next/link';
+import { cookies } from 'next/headers';
 
 export const metadata = {
   title: 'Hall of Fame | Badges with Personality',
@@ -11,6 +12,8 @@ export const revalidate = 60; // Revalidate every minute
 
 export default async function HallOfFamePage() {
   const awards = await getAllAwards();
+  const cookieStore = await cookies();
+  const isAdmin = cookieStore.get('admin_key')?.value === process.env.ADMIN_KEY;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-badge-background to-white">
@@ -22,6 +25,14 @@ export default async function HallOfFamePage() {
           <p className="text-xl text-gray-600">
             Celebrating exceptional achievements across our projects
           </p>
+          {isAdmin && (
+            <Link
+              href="/admin/hof"
+              className="inline-block mt-4 px-6 py-2 bg-badge-primary text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Manage Awards (Admin)
+            </Link>
+          )}
         </header>
 
         {awards.length === 0 ? (

@@ -122,7 +122,13 @@ export default async function ManageAwardsPage() {
           </div>
         </div>
         
-        <div className="mt-8 text-center">
+        <div className="mt-8 flex gap-4 justify-center">
+          <Link
+            href="/admin/hof"
+            className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+          >
+            Manage Awards (Delete)
+          </Link>
           <Link
             href="/hof"
             className="text-badge-primary hover:underline"
