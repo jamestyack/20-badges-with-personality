@@ -68,15 +68,17 @@ export async function getAllAwards() {
 export async function createBadge(badge: Omit<Badge, 'id' | 'created_at'>): Promise<Badge> {
   const { rows } = await pool.query(`
     INSERT INTO badges (
-      slug, name, style_key, prompt, model_used, seed, 
+      slug, name, style_key, prompt, actual_prompt, style_template,
+      reference_style, quality_setting, model_used, seed, 
       image_blob_url, thumb_blob_url, created_by
     ) VALUES (
-      $1, $2, $3, $4, $5, $6, $7, $8, $9
+      $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13
     )
     RETURNING *
   `, [
     badge.slug, badge.name, badge.style_key, 
-    badge.prompt, badge.model_used, badge.seed, 
+    badge.prompt, badge.actual_prompt, badge.style_template,
+    badge.reference_style, badge.quality_setting, badge.model_used, badge.seed, 
     badge.image_blob_url, badge.thumb_blob_url, badge.created_by
   ]);
   return rows[0];
@@ -122,4 +124,17 @@ export async function getAllPeople(): Promise<Person[]> {
 export async function getAllProjects(): Promise<Project[]> {
   const { rows } = await pool.query('SELECT * FROM projects ORDER BY name');
   return rows;
+}
+
+export async function deleteAward(awardId: string): Promise<boolean> {
+  try {
+    const { rowCount } = await pool.query(
+      'DELETE FROM awards WHERE id = $1',
+      [awardId]
+    );
+    return rowCount ? rowCount > 0 : false;
+  } catch (error) {
+    console.error('Error deleting award:', error);
+    return false;
+  }
 }

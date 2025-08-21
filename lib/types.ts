@@ -4,6 +4,10 @@ export interface Badge {
   name: string;
   style_key: BadgeStyle;
   prompt: string;
+  actual_prompt?: string;
+  style_template?: string;
+  reference_style?: string;
+  quality_setting?: 'standard' | 'hd';
   model_used: string;
   seed: number | null;
   image_blob_url: string;

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateBadgeImage } from '@/lib/ai';
 import { processAndStoreBadge, generateSlug } from '@/lib/image';
 import { createBadge } from '@/lib/db';
+import { combineTemplateWithBrief } from '@/lib/style-templates';
 import { z } from 'zod';
 import type { BadgeStyle, BadgeBrief } from '@/lib/types';
 
@@ -17,6 +18,11 @@ const RequestSchema = z.object({
       bg: z.string(),
     }),
     image_prompt: z.string(),
+    _metadata: z.object({
+      styleTemplate: z.string().optional(),
+      referenceStyle: z.string().optional(),
+      quality: z.enum(['standard', 'hd']).optional(),
+    }).optional(),
   }),
   createdBy: z.string().default('admin'),
 });
@@ -26,7 +32,25 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { name, style, brief, createdBy } = RequestSchema.parse(body);
     
-    const imageUrl = await generateBadgeImage(brief as BadgeBrief, style as BadgeStyle);
+    // Extract metadata if present
+    const metadata = brief._metadata || {};
+    const quality = metadata.quality || 'standard';
+    
+    // Generate reference style string if template or custom style provided
+    let referenceStyle: string | undefined;
+    if (metadata.styleTemplate || metadata.referenceStyle) {
+      referenceStyle = combineTemplateWithBrief(
+        metadata.styleTemplate || '',
+        metadata.referenceStyle
+      );
+    }
+    
+    // Generate image with enhanced options
+    const { imageUrl, actualPrompt } = await generateBadgeImage(
+      brief as BadgeBrief, 
+      style as BadgeStyle,
+      { quality, referenceStyle }
+    );
     
     const slug = generateSlug(name);
     const { imageUrl: storedImageUrl, thumbUrl } = await processAndStoreBadge(imageUrl, slug);
@@ -36,6 +60,10 @@ export async function POST(request: NextRequest) {
       name,
       style_key: style as BadgeStyle,
       prompt: brief.image_prompt,
+      actual_prompt: actualPrompt,
+      style_template: metadata.styleTemplate,
+      reference_style: metadata.referenceStyle,
+      quality_setting: quality,
       model_used: process.env.ANTHROPIC_API_KEY ? 'claude-3-5-sonnet' : 'gpt-4o-mini',
       seed: Math.floor(Math.random() * 1000000),
       image_blob_url: storedImageUrl,
@@ -46,6 +74,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       badge,
+      actualPrompt, // Return the actual prompt for display
     });
   } catch (error) {
     console.error('Generate image error:', error);

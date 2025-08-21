@@ -41,11 +41,15 @@ export async function processAndStoreBadge(imageUrl: string, badgeSlug: string) 
 }
 
 export function generateSlug(name: string): string {
-  return name
+  const baseSlug = name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
-    .substring(0, 50);
+    .substring(0, 40); // Leave room for timestamp suffix
+  
+  // Add timestamp to ensure uniqueness
+  const timestamp = Date.now().toString(36); // Convert to base36 for shorter string
+  return `${baseSlug}-${timestamp}`;
 }
 
 export function generatePermalink(): string {
