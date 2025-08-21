@@ -70,14 +70,18 @@ AI-generated achievement badges for celebrating project milestones.
 ### Database Commands
 
 ```bash
-npm run db:up          # Start Postgres container
-npm run db:down        # Stop and remove container
-npm run db:migrate:local # Run migrations on local DB
-npm run db:seed        # Seed sample data (optional)
-npm run db:setup       # Full setup (start + migrate)
+npm run db:up              # Start Postgres container
+npm run db:down            # Stop and remove container
+npm run db:migrate:local   # Run migrations on local DB
+npm run db:migrate:vercel  # Run migrations on Vercel Postgres
+npm run db:migrate:neon    # Run migrations on Neon database
+npm run db:seed            # Seed sample data (optional)
+npm run db:setup           # Full setup (start + migrate)
 ```
 
-## Deployment to Vercel
+## Deployment to Vercel + Neon
+
+### Option A: Vercel Postgres (Built-in)
 
 1. **Push to GitHub**
 
@@ -103,7 +107,44 @@ npm run db:setup       # Full setup (start + migrate)
    After first deploy, run migrations:
    ```bash
    vercel env pull .env.production.local
-   NODE_ENV=production npm run db:migrate
+   NODE_ENV=production npm run db:migrate:vercel
+   ```
+
+### Option B: Neon Serverless Postgres (Recommended)
+
+1. **Create Neon Database:**
+   - Go to [neon.tech](https://neon.tech) and sign up
+   - Create a new project
+   - Copy your connection string from the dashboard
+
+2. **Push to GitHub and Import to Vercel:**
+   - Push code to GitHub repository
+   - Go to [vercel.com/new](https://vercel.com/new)
+   - Import your GitHub repository
+   - Framework preset: Next.js
+
+3. **Configure Vercel Storage:**
+   - In Vercel Dashboard → Storage
+   - Create a Blob store (for images)
+
+4. **Set Environment Variables:**
+   In Vercel Dashboard → Settings → Environment Variables:
+   - `DATABASE_URL` or `POSTGRES_URL` - Your Neon connection string
+   - `ADMIN_KEY` - Your admin passphrase
+   - `OPENAI_API_KEY` - OpenAI API key
+   - `ANTHROPIC_API_KEY` - Anthropic key (optional)
+   - `NEXT_PUBLIC_BASE_URL` - Your production URL (e.g., https://yourdomain.vercel.app)
+
+5. **Run Database Migration:**
+   After first deploy, migrate your database:
+   
+   **Option 5a: Via API (Browser)**
+   - Visit `https://your-app.vercel.app/api/admin/migrate-neon`
+   - Should return success message
+   
+   **Option 5b: Via CLI**
+   ```bash
+   npm run db:migrate:neon
    ```
 
 ## Usage
@@ -159,7 +200,7 @@ npm run db:setup       # Full setup (start + migrate)
 
 - **Frontend:** Next.js 15, React 19, Tailwind CSS
 - **Backend:** Next.js Route Handlers
-- **Database:** Postgres (local Docker / Vercel Postgres)
+- **Database:** Postgres (local Docker / Vercel Postgres / Neon)
 - **File Storage:** Local filesystem (dev) / Vercel Blob (prod)
 - **AI:** OpenAI (DALL-E), Anthropic Claude (optional)
 - **Image Processing:** Sharp
