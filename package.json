@@ -13,7 +13,8 @@
     "db:migrate:local": "node scripts/migrate-local.mjs",
     "db:add-columns": "node scripts/add-badge-columns.mjs",
     "db:seed": "node scripts/seed.mjs",
-    "db:setup": "npm run db:up && sleep 3 && npm run db:migrate:local"
+    "db:setup": "npm run db:up && sleep 3 && npm run db:migrate:local",
+    "db:migrate:vercel": "node scripts/vercel-migrate.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.0",
