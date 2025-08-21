@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateBadgeImage } from '@/lib/ai';
-import { processAndStoreBadge, generateSlug } from '@/lib/image-vercel';
 import { createBadge } from '@/lib/db';
 import { combineTemplateWithBrief } from '@/lib/style-templates';
 import { z } from 'zod';
 import type { BadgeStyle, BadgeBrief } from '@/lib/types';
+
+// Conditionally import based on environment
+const imageModule = process.env.NODE_ENV === 'production' || process.env.BLOB_READ_WRITE_TOKEN
+  ? await import('@/lib/image-vercel')
+  : await import('@/lib/image');
+
+const { processAndStoreBadge, generateSlug } = imageModule;
 
 const RequestSchema = z.object({
   name: z.string().min(1).max(100),
