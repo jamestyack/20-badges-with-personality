@@ -7,14 +7,14 @@ export async function getBadgeBySlug(slug: string): Promise<Badge | null> {
   const rows = await sql`
     SELECT * FROM badges WHERE slug = ${slug} LIMIT 1
   `;
-  return rows[0] || null;
+  return (rows[0] as Badge) || null;
 }
 
 export async function getAwardByPermalink(permalink: string): Promise<Award | null> {
   const rows = await sql`
     SELECT * FROM awards WHERE public_permalink = ${permalink} LIMIT 1
   `;
-  return rows[0] || null;
+  return (rows[0] as Award) || null;
 }
 
 export async function getAwardWithDetails(permalink: string) {
@@ -74,7 +74,7 @@ export async function createBadge(badge: Omit<Badge, 'id' | 'created_at'>): Prom
     )
     RETURNING *
   `;
-  return rows[0];
+  return rows[0] as Badge;
 }
 
 export async function createPerson(person: Omit<Person, 'id' | 'created_at'>): Promise<Person> {
@@ -83,7 +83,7 @@ export async function createPerson(person: Omit<Person, 'id' | 'created_at'>): P
     VALUES (${person.name}, ${person.handle}, ${person.title}, ${person.avatar_url})
     RETURNING *
   `;
-  return rows[0];
+  return rows[0] as Person;
 }
 
 export async function createProject(project: Omit<Project, 'id' | 'created_at'>): Promise<Project> {
@@ -92,7 +92,7 @@ export async function createProject(project: Omit<Project, 'id' | 'created_at'>)
     VALUES (${project.name}, ${project.short_desc})
     RETURNING *
   `;
-  return rows[0];
+  return rows[0] as Project;
 }
 
 export async function createAward(award: Omit<Award, 'id' | 'created_at'>): Promise<Award> {
@@ -101,22 +101,22 @@ export async function createAward(award: Omit<Award, 'id' | 'created_at'>): Prom
     VALUES (${award.badge_id}, ${award.person_id}, ${award.project_id}, ${award.citation}, ${award.public_permalink})
     RETURNING *
   `;
-  return rows[0];
+  return rows[0] as Award;
 }
 
 export async function getAllBadges(): Promise<Badge[]> {
   const rows = await sql`SELECT * FROM badges ORDER BY created_at DESC`;
-  return rows;
+  return rows as Badge[];
 }
 
 export async function getAllPeople(): Promise<Person[]> {
   const rows = await sql`SELECT * FROM people ORDER BY name`;
-  return rows;
+  return rows as Person[];
 }
 
 export async function getAllProjects(): Promise<Project[]> {
   const rows = await sql`SELECT * FROM projects ORDER BY name`;
-  return rows;
+  return rows as Project[];
 }
 
 export async function deleteAward(awardId: string): Promise<boolean> {
